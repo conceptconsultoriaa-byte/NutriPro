@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  body{margin:0; font-family:'Archivo',Arial,sans-serif;}
+  .stage{ width:1080px; height:1350px; position:relative; overflow:hidden; background:#101010; color:#fff; }
+  .photo{ position:absolute; inset:0; background:url('https://images.unsplash.com/photo-1585358682246-23acb1561f6b?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat; }
+  .fade{ position:absolute; inset:0; background:linear-gradient(180deg, rgba(16,16,16,0.15) 0%, rgba(16,16,16,0.55) 45%, rgba(16,16,16,0.97) 78%, #101010 100%); }
+  .content{ position:absolute; left:0; right:0; bottom:0; padding:64px 70px 70px; }
+  .eyebrow{ display:inline-block; background:#D9FF3F; color:#101010; font-weight:800; font-size:22px; text-transform:uppercase; letter-spacing:0.04em; padding:8px 20px; border-radius:999px; margin-bottom:26px; }
+  h1{ font-family:'Anton',sans-serif; font-size:96px; line-height:0.96; text-transform:uppercase; margin:0 0 8px; letter-spacing:0.01em; }
+  .tagline{ font-size:30px; font-weight:600; color:#E9E4EA; margin:0 0 40px; max-width:820px; line-height:1.35; }
+  .features{ display:flex; flex-wrap:wrap; gap:16px 40px; margin-bottom:48px; }
+  .feature{ display:flex; align-items:center; gap:14px; font-size:26px; font-weight:700; }
+  .dot{width:14px; height:14px; border-radius:50%; background:#D9FF3F; flex:none;}
+  .cta{ background:#fff; border-radius:20px; padding:32px 36px; display:flex; align-items:center; justify-content:space-between; gap:24px; }
+  .cta-text{color:#101010;}
+  .cta-label{font-size:20px; font-weight:800; text-transform:uppercase; letter-spacing:0.04em; color:#8C8C4E; margin-bottom:6px;}
+  .cta-value{font-family:'Anton',sans-serif; font-size:24px; text-transform:uppercase; word-break:break-all;}
+  .cta-sub{font-size:20px; color:#5A5560; margin-top:4px; font-weight:600;}
+  .badge{ background:#101010; color:#fff; font-family:'Anton',sans-serif; font-size:22px; text-transform:uppercase; padding:18px 26px; border-radius:14px; white-space:nowrap; }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="photo"></div>
+    <div class="fade"></div>
+    <div class="content">
+      <span class="eyebrow">Teste grátis · 30 dias</span>
+      <h1>NutriPro</h1>
+      <p class="tagline">A agenda profissional para nutricionistas acompanharem consultas e pacientes, com diário alimentar por foto entre uma consulta e outra.</p>
+      <div class="features">
+        <div class="feature"><span class="dot"></span> Agenda de consultas</div>
+        <div class="feature"><span class="dot"></span> Diário alimentar por foto do paciente</div>
+        <div class="feature"><span class="dot"></span> Pagamento cai direto na sua conta</div>
+      </div>
+      <div class="cta">
+        <div class="cta-text">
+          <div class="cta-label">Teste grátis agora</div>
+          <div class="cta-value">conceptconsultoriaa-byte.github.io/NutriPro/login.html</div>
+          <div class="cta-sub">30 dias, sem cartão de crédito</div>
+        </div>
+        <div class="badge">30 dias<br>grátis</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
