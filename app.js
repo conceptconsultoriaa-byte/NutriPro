@@ -267,26 +267,56 @@ cfgForm.addEventListener("submit", async e=>{
 });
 
 /* ---------------- PROFISSIONAIS ---------------- */
+let editingProfId = null;
 document.getElementById("profForm").addEventListener("submit", async e=>{
   e.preventDefault();
-  const limite = planoAtual().profissionais;
-  if(PROFESSIONALS.length >= limite){
-    alert(`Seu plano atual permite até ${limite} profissionais. Para cadastrar mais, faça upgrade em Configurações → Assinatura.`);
-    return;
+  if(!editingProfId){
+    const limite = planoAtual().profissionais;
+    if(PROFESSIONALS.length >= limite){
+      alert(`Seu plano atual permite até ${limite} profissionais. Para cadastrar mais, faça upgrade em Configurações → Assinatura.`);
+      return;
+    }
   }
   const name = document.getElementById("profNome").value.trim();
   const spec = document.getElementById("profEspecialidade").value.trim();
   const start_time = document.getElementById("profInicio").value;
   const end_time = document.getElementById("profFim").value;
   if(!name) return;
-  const color = PALETTE[PROFESSIONALS.length % PALETTE.length];
-  const { error } = await supabaseClient.from("professionals").insert({ business_id: BUSINESS.id, name, spec, start_time, end_time, color });
+  let error;
+  if(editingProfId){
+    ({ error } = await supabaseClient.from("professionals").update({ name, spec, start_time, end_time }).eq("id", editingProfId));
+  } else {
+    const color = PALETTE[PROFESSIONALS.length % PALETTE.length];
+    ({ error } = await supabaseClient.from("professionals").insert({ business_id: BUSINESS.id, name, spec, start_time, end_time, color }));
+  }
   if(error){ alert("Erro: " + error.message); return; }
-  e.target.reset();
-  document.getElementById("profInicio").value = "09:00";
-  document.getElementById("profFim").value = "18:00";
+  cancelarEdicaoProf();
   await loadAll(); refreshAll();
 });
+function editarProfissional(p){
+  editingProfId = p.id;
+  document.getElementById("profNome").value = p.name || "";
+  document.getElementById("profEspecialidade").value = p.spec || "";
+  document.getElementById("profInicio").value = p.start_time || p.start || "09:00";
+  document.getElementById("profFim").value = p.end_time || p.end || "18:00";
+  const titulo = document.getElementById("profFormTitle");
+  titulo.textContent = "Editando: " + p.name;
+  titulo.style.display = "block";
+  document.getElementById("profFormSubmitBtn").textContent = "Salvar alterações";
+  document.getElementById("profFormCancelBtn").style.display = "inline-block";
+  document.getElementById("profForm").scrollIntoView({ behavior: "smooth", block: "start" });
+  document.getElementById("profNome").focus();
+}
+function cancelarEdicaoProf(){
+  editingProfId = null;
+  document.getElementById("profForm").reset();
+  document.getElementById("profInicio").value = "09:00";
+  document.getElementById("profFim").value = "18:00";
+  document.getElementById("profFormTitle").style.display = "none";
+  document.getElementById("profFormSubmitBtn").textContent = "Adicionar";
+  document.getElementById("profFormCancelBtn").style.display = "none";
+}
+document.getElementById("profFormCancelBtn").addEventListener("click", cancelarEdicaoProf);
 
 function renderProfList(){
   const el = document.getElementById("profList");
@@ -301,8 +331,12 @@ function renderProfList(){
     div.innerHTML = `
       <span><span class="dot" style="background:${p.color};width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px;"></span>
       <strong>${p.name}</strong> ${p.spec?("— "+p.spec):""} (${p.start}–${p.end})</span>
-      <button class="btn-danger">Remover</button>`;
-    div.querySelector("button").addEventListener("click", async ()=>{
+      <span style="display:flex; gap:8px;">
+        <button class="btn-secondary btn-editar">Editar</button>
+        <button class="btn-danger">Remover</button>
+      </span>`;
+    div.querySelector(".btn-editar").addEventListener("click", ()=> editarProfissional(p));
+    div.querySelector(".btn-danger").addEventListener("click", async ()=>{
       if(!confirm(`Remover ${p.name}? Isso também apaga os agendamentos dele(a).`)) return;
       await supabaseClient.from("professionals").delete().eq("id", p.id);
       await loadAll(); refreshAll();
@@ -312,18 +346,45 @@ function renderProfList(){
 }
 
 /* ---------------- SERVIÇOS ---------------- */
+let editingServId = null;
 document.getElementById("servForm").addEventListener("submit", async e=>{
   e.preventDefault();
   const name = document.getElementById("servNome").value.trim();
   const price = parseFloat(document.getElementById("servPreco").value);
   const duration = parseInt(document.getElementById("servDuracao").value,10);
   if(!name || isNaN(price) || isNaN(duration)) return;
-  const { error } = await supabaseClient.from("services").insert({ business_id: BUSINESS.id, name, price, duration });
+  let error;
+  if(editingServId){
+    ({ error } = await supabaseClient.from("services").update({ name, price, duration }).eq("id", editingServId));
+  } else {
+    ({ error } = await supabaseClient.from("services").insert({ business_id: BUSINESS.id, name, price, duration }));
+  }
   if(error){ alert("Erro: " + error.message); return; }
-  e.target.reset();
-  document.getElementById("servDuracao").value = 60;
+  cancelarEdicaoServ();
   await loadAll(); refreshAll();
 });
+function editarServico(s){
+  editingServId = s.id;
+  document.getElementById("servNome").value = s.name || "";
+  document.getElementById("servPreco").value = s.price || "";
+  document.getElementById("servDuracao").value = s.duration || 60;
+  const titulo = document.getElementById("servFormTitle");
+  titulo.textContent = "Editando: " + s.name;
+  titulo.style.display = "block";
+  document.getElementById("servFormSubmitBtn").textContent = "Salvar alterações";
+  document.getElementById("servFormCancelBtn").style.display = "inline-block";
+  document.getElementById("servForm").scrollIntoView({ behavior: "smooth", block: "start" });
+  document.getElementById("servNome").focus();
+}
+function cancelarEdicaoServ(){
+  editingServId = null;
+  document.getElementById("servForm").reset();
+  document.getElementById("servDuracao").value = 60;
+  document.getElementById("servFormTitle").style.display = "none";
+  document.getElementById("servFormSubmitBtn").textContent = "Adicionar serviço";
+  document.getElementById("servFormCancelBtn").style.display = "none";
+}
+document.getElementById("servFormCancelBtn").addEventListener("click", cancelarEdicaoServ);
 
 function renderServList(){
   const el = document.getElementById("servList");
@@ -332,8 +393,12 @@ function renderServList(){
     const div = document.createElement("div");
     div.className = "list-item";
     div.innerHTML = `<span><strong>${s.name}</strong> — ${brl(s.price)} · ${s.duration} min</span>
-      <button class="btn-danger">Remover</button>`;
-    div.querySelector("button").addEventListener("click", async ()=>{
+      <span style="display:flex; gap:8px;">
+        <button class="btn-secondary btn-editar">Editar</button>
+        <button class="btn-danger">Remover</button>
+      </span>`;
+    div.querySelector(".btn-editar").addEventListener("click", ()=> editarServico(s));
+    div.querySelector(".btn-danger").addEventListener("click", async ()=>{
       await supabaseClient.from("services").delete().eq("id", s.id);
       await loadAll(); refreshAll();
     });
@@ -648,6 +713,10 @@ function renderPacientesList(){
     div.className = "list-item";
     div.innerHTML = `<span><strong>${p.nome}</strong> · ${p.telefone}</span><span class="row-actions"></span>`;
     const actions = div.querySelector(".row-actions");
+    const editBtn = document.createElement("button");
+    editBtn.className = "btn-secondary"; editBtn.textContent = "Editar";
+    editBtn.addEventListener("click", ()=> editarPaciente(p));
+    actions.appendChild(editBtn);
     const verBtn = document.createElement("button");
     verBtn.className = "btn-secondary"; verBtn.textContent = "Ver diário";
     verBtn.addEventListener("click", ()=> abrirPaciente(p));
@@ -656,11 +725,21 @@ function renderPacientesList(){
   });
 }
 
+let editingPacienteId = null;
 document.getElementById("pacienteForm").addEventListener("submit", async e=>{
   e.preventDefault();
   const nome = document.getElementById("pacNome").value.trim();
   const telefone = document.getElementById("pacTelefone").value.trim().replace(/\D/g,"");
   if(!nome || !telefone) return;
+  if(editingPacienteId){
+    const { data, error } = await supabaseClient.from("pacientes").update({ nome, telefone }).eq("id", editingPacienteId).select().single();
+    if(error){ alert("Erro ao salvar: " + error.message); return; }
+    const idx = PACIENTES.findIndex(p=>p.id===editingPacienteId);
+    if(idx>=0) PACIENTES[idx] = data;
+    cancelarEdicaoPaciente();
+    renderPacientesList();
+    return;
+  }
   const { data, error } = await supabaseClient.from("pacientes").insert({ business_id: BUSINESS.id, nome, telefone }).select().single();
   if(error){ alert("Erro ao cadastrar paciente: " + error.message); return; }
   PACIENTES.unshift(data);
@@ -668,6 +747,26 @@ document.getElementById("pacienteForm").addEventListener("submit", async e=>{
   renderPacientesList();
   abrirPaciente(data);
 });
+function editarPaciente(p){
+  editingPacienteId = p.id;
+  document.getElementById("pacNome").value = p.nome || "";
+  document.getElementById("pacTelefone").value = p.telefone || "";
+  const titulo = document.getElementById("pacienteFormTitle");
+  titulo.textContent = "Editando: " + p.nome;
+  titulo.style.display = "block";
+  document.getElementById("pacienteFormSubmitBtn").textContent = "Salvar alterações";
+  document.getElementById("pacienteFormCancelBtn").style.display = "inline-block";
+  document.getElementById("pacienteForm").scrollIntoView({ behavior: "smooth", block: "start" });
+  document.getElementById("pacNome").focus();
+}
+function cancelarEdicaoPaciente(){
+  editingPacienteId = null;
+  document.getElementById("pacienteForm").reset();
+  document.getElementById("pacienteFormTitle").style.display = "none";
+  document.getElementById("pacienteFormSubmitBtn").textContent = "Cadastrar paciente";
+  document.getElementById("pacienteFormCancelBtn").style.display = "none";
+}
+document.getElementById("pacienteFormCancelBtn").addEventListener("click", cancelarEdicaoPaciente);
 
 async function abrirPaciente(paciente){
   PACIENTE_ATUAL = paciente;

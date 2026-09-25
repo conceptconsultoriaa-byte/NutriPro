@@ -82,18 +82,22 @@
     <section id="tab-profissionais" class="tab-panel">
       <h1>Profissionais</h1>
       <form id="profForm" class="form-inline">
+        <span id="profFormTitle" class="hint" style="flex-basis:100%; margin:0; display:none; font-weight:800; text-transform:uppercase; font-size:0.78rem; color:var(--lime);"></span>
         <input type="text" id="profNome" placeholder="Nome do profissional" required>
         <input type="text" id="profEspecialidade" placeholder="Especialidade (ex: Nutrição Esportiva)">
         <input type="time" id="profInicio" value="09:00" required>
         <input type="time" id="profFim" value="18:00" required>
-        <button type="submit" class="btn-primary">Adicionar</button>
+        <button type="submit" class="btn-primary" id="profFormSubmitBtn">Adicionar</button>
+        <button type="button" class="btn-secondary" id="profFormCancelBtn" style="display:none;">Cancelar edição</button>
       </form>
       <h2>Serviços do segmento</h2>
       <form id="servForm" class="form-inline">
+        <span id="servFormTitle" class="hint" style="flex-basis:100%; margin:0; display:none; font-weight:800; text-transform:uppercase; font-size:0.78rem; color:var(--lime);"></span>
         <input type="text" id="servNome" placeholder="Nome do serviço" required>
         <input type="number" id="servPreco" placeholder="Preço (R$)" min="0" step="0.01" required>
         <input type="number" id="servDuracao" placeholder="Duração (min)" min="15" step="15" value="60" required>
-        <button type="submit" class="btn-primary">Adicionar serviço</button>
+        <button type="submit" class="btn-primary" id="servFormSubmitBtn">Adicionar serviço</button>
+        <button type="button" class="btn-secondary" id="servFormCancelBtn" style="display:none;">Cancelar edição</button>
       </form>
       <div id="profList" class="list"></div>
       <div id="servList" class="list"></div>
@@ -104,9 +108,11 @@
         <h1>Pacientes</h1>
         <p class="hint">Cada paciente cadastrado ganha um link permanente de diário alimentar por foto — mande uma vez pelo WhatsApp, ele usa todos os dias.</p>
         <form id="pacienteForm" class="form-inline">
+          <span id="pacienteFormTitle" class="hint" style="flex-basis:100%; margin:0; display:none; font-weight:800; text-transform:uppercase; font-size:0.78rem; color:var(--lime);"></span>
           <input type="text" id="pacNome" placeholder="Nome do paciente" required>
           <input type="tel" id="pacTelefone" placeholder="WhatsApp (55 11 99999-9999)" required>
-          <button type="submit" class="btn-primary">Cadastrar paciente</button>
+          <button type="submit" class="btn-primary" id="pacienteFormSubmitBtn">Cadastrar paciente</button>
+          <button type="button" class="btn-secondary" id="pacienteFormCancelBtn" style="display:none;">Cancelar edição</button>
         </form>
         <div id="pacientesList" class="list"></div>
       </div>
